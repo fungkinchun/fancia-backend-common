@@ -76,10 +76,8 @@ class PostService(
             throw InvalidAuthenticationException()
         }
         if (post.isExpired()) {
-            if (request.status == null) {
-                throw PostExpiredException()
-            }
-            applyStatus(post, request.status)
+            val statusUpdate = request.status ?: throw PostExpiredException()
+            applyStatus(post, statusUpdate)
             return postRepository.save(post).toDto(currentUserId)
         }
         if (post.kind == PostKind.POLL) {
@@ -99,9 +97,7 @@ class PostService(
         if (request.expiredAt != null) {
             post.expiredAt = request.expiredAt
         }
-        if (request.status != null) {
-            applyStatus(post, request.status)
-        }
+        request.status?.let { applyStatus(post, it) }
         return postRepository.save(post).toDto(currentUserId)
     }
 
