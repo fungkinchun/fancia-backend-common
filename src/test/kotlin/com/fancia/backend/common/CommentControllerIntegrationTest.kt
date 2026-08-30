@@ -38,8 +38,7 @@ class CommentControllerIntegrationTest(
             "authorUserId" to userId.toString(),
             "body" to "Test post",
             "media" to emptyList<Any>(),
-            "featured" to false,
-            "pinned" to false,
+            "status" to "VISIBLE",
         )
         val postResponseBody = mockMvc
             .post("/internal/posts") {

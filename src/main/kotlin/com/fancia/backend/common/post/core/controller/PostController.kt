@@ -1,12 +1,11 @@
 package com.fancia.backend.common.post.core.controller
 
-import com.fancia.backend.common.post.core.repository.PostRepository
 import com.fancia.backend.common.post.core.service.PostService
-import com.fancia.backend.common.post.mapper.toDto
+import com.fancia.backend.shared.common.post.core.dto.CastPollVoteRequest
 import com.fancia.backend.shared.common.post.core.dto.CreatePostRequest
 import com.fancia.backend.shared.common.post.core.dto.PostResponse
 import com.fancia.backend.shared.common.post.core.dto.UpdatePostRequest
-import com.fancia.backend.shared.common.post.core.exception.PostNotFoundException
+import com.fancia.backend.shared.common.post.core.enums.PostKind
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -30,11 +29,10 @@ import java.util.*
 @SecurityRequirement(name = "bearerAuth")
 class PostController(
     private val postService: PostService,
-    private val postRepository: PostRepository,
 ) {
     @Operation(
         summary = "Create post",
-        description = "Persists a post for a target. authorUserId must match JWT userId."
+        description = "Persists a post for a target. authorUserId must match JWT userId. Use kind=POLL with poll options for voting posts."
     )
     @ApiResponses(
         value = [
@@ -51,14 +49,23 @@ class PostController(
         return ResponseEntity.status(HttpStatus.CREATED).body(postService.create(request, jwt))
     }
 
-    @Operation(summary = "List posts for target", description = "Paginated posts for an event, group, or user profile.")
+    @Operation(
+        summary = "List posts for target",
+        description = "Paginated posts for an event, group, or user profile. Use kind=POLL and openOnly=true for open/upcoming votes.",
+    )
     @GetMapping
     fun list(
         @RequestParam @Parameter(description = "Event, interest group, or user id") targetId: UUID,
+        @RequestParam(required = false)
+        @Parameter(description = "Filter by post kind (TEXT or POLL)")
+        kind: PostKind?,
+        @RequestParam(defaultValue = "false")
+        @Parameter(description = "When true, only open poll posts (closesAt null or in the future)")
+        openOnly: Boolean,
         @PageableDefault(size = 20) pageable: Pageable,
         @AuthenticationPrincipal jwt: Jwt?,
     ): ResponseEntity<Page<PostResponse>> {
-        return ResponseEntity.ok(postService.listByTargetId(targetId, pageable, jwt))
+        return ResponseEntity.ok(postService.listByTargetId(targetId, kind, openOnly, pageable, jwt))
     }
 
     @Operation(summary = "Get post by id")
@@ -67,9 +74,7 @@ class PostController(
         @PathVariable postId: UUID,
         @AuthenticationPrincipal jwt: Jwt?,
     ): ResponseEntity<PostResponse> {
-        val currentUserId = jwt?.getClaimAsString("userId")?.let { UUID.fromString(it) }
-        val post = postRepository.findById(postId).orElseThrow { PostNotFoundException(postId) }
-        return ResponseEntity.ok(post.toDto(currentUserId))
+        return ResponseEntity.ok(postService.getById(postId, jwt))
     }
 
     @Operation(summary = "Update post")
@@ -100,5 +105,15 @@ class PostController(
     ): ResponseEntity<Void> {
         postService.unlike(postId, jwt)
         return ResponseEntity.noContent().build()
+    }
+
+    @Operation(summary = "Vote on poll post", description = "Cast or replace votes on a POLL post. Returns the updated post with tallies.")
+    @PostMapping("/{postId}/votes")
+    fun vote(
+        @PathVariable postId: UUID,
+        @RequestBody @Valid request: CastPollVoteRequest,
+        @AuthenticationPrincipal jwt: Jwt,
+    ): ResponseEntity<PostResponse> {
+        return ResponseEntity.ok(postService.vote(postId, request, jwt))
     }
 }
