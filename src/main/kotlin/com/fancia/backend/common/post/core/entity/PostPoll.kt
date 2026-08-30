@@ -22,7 +22,7 @@ class PostPoll(
 
     @OneToMany(mappedBy = "poll", cascade = [CascadeType.ALL], orphanRemoval = true)
     @OrderBy("sortOrder ASC")
-    var options: MutableList<PostPollOption> = mutableListOf()
+    var options: MutableSet<PostPollOption> = mutableSetOf()
 
     @OneToMany(mappedBy = "poll", cascade = [CascadeType.ALL], orphanRemoval = true)
     var votes: MutableSet<PostPollVote> = mutableSetOf()

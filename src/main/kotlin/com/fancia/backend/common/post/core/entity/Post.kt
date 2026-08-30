@@ -27,7 +27,7 @@ class Post(
 ) : AbstractEntity() {
     @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL], orphanRemoval = true)
     @OrderBy("sortOrder ASC")
-    var media: MutableList<PostMedia> = mutableListOf()
+    var media: MutableSet<PostMedia> = mutableSetOf()
 
     @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL], orphanRemoval = true)
     var likes: MutableSet<PostLike> = mutableSetOf()
