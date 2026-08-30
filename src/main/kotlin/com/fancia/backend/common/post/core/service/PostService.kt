@@ -64,6 +64,7 @@ class PostService(
             attachPoll(post, request.poll!!)
         }
         applyStatus(post, request.status)
+        markReadOnlyIfPollAlreadyClosed(post)
         return postRepository.save(post).toDto(currentUserId)
     }
 
@@ -175,16 +176,17 @@ class PostService(
     fun listByTargetId(
         targetId: UUID,
         kind: PostKind?,
-        openOnly: Boolean,
+        statuses: Collection<PostStatus>?,
         pageable: Pageable,
         jwt: Jwt?,
     ): Page<PostResponse> {
         val currentUserId = jwt?.getClaimAsString("userId")?.let { UUID.fromString(it) }
+        val statusFilter = statuses?.takeIf { it.isNotEmpty() }
         return postRepository.findByTargetIdFiltered(
             targetId = targetId,
             kind = kind,
-            openOnly = openOnly,
-            now = LocalDateTime.now(),
+            statusesEmpty = statusFilter == null,
+            statuses = statusFilter ?: listOf(PostStatus.VISIBLE),
             pageable = pageable,
         ).map { it.toDto(currentUserId) }
     }
@@ -211,7 +213,7 @@ class PostService(
             ?: throw InvalidAuthenticationException()
 
     private fun requireMutable(post: Post) {
-        if (post.isExpired()) {
+        if (post.isExpired() || post.status == PostStatus.READ_ONLY || post.status == PostStatus.HIDDEN) {
             throw PostExpiredException()
         }
     }
@@ -249,6 +251,13 @@ class PostService(
             )
         }
         post.poll = poll
+    }
+
+    private fun markReadOnlyIfPollAlreadyClosed(post: Post) {
+        val closesAt = post.poll?.closesAt ?: return
+        if (!closesAt.isAfter(LocalDateTime.now())) {
+            post.status = PostStatus.READ_ONLY
+        }
     }
 
     private fun applyStatus(post: Post, status: PostStatus) {

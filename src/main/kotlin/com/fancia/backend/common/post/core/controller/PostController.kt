@@ -6,6 +6,7 @@ import com.fancia.backend.shared.common.post.core.dto.CreatePostRequest
 import com.fancia.backend.shared.common.post.core.dto.PostResponse
 import com.fancia.backend.shared.common.post.core.dto.UpdatePostRequest
 import com.fancia.backend.shared.common.post.core.enums.PostKind
+import com.fancia.backend.shared.common.post.core.enums.PostStatus
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.responses.ApiResponse
@@ -49,23 +50,20 @@ class PostController(
         return ResponseEntity.status(HttpStatus.CREATED).body(postService.create(request, jwt))
     }
 
-    @Operation(
-        summary = "List posts for target",
-        description = "Paginated posts for an event, group, or user profile. Use kind=POLL and openOnly=true for open/upcoming votes.",
-    )
+    @Operation(summary = "List posts for target", description = "Paginated posts for an event, group, or user profile.")
     @GetMapping
     fun list(
         @RequestParam @Parameter(description = "Event, interest group, or user id") targetId: UUID,
         @RequestParam(required = false)
         @Parameter(description = "Filter by post kind (TEXT or POLL)")
         kind: PostKind?,
-        @RequestParam(defaultValue = "false")
-        @Parameter(description = "When true, only open poll posts (closesAt null or in the future)")
-        openOnly: Boolean,
+        @RequestParam(required = false)
+        @Parameter(description = "Filter by post status (repeatable)")
+        status: List<PostStatus>?,
         @PageableDefault(size = 20) pageable: Pageable,
         @AuthenticationPrincipal jwt: Jwt?,
     ): ResponseEntity<Page<PostResponse>> {
-        return ResponseEntity.ok(postService.listByTargetId(targetId, kind, openOnly, pageable, jwt))
+        return ResponseEntity.ok(postService.listByTargetId(targetId, kind, status, pageable, jwt))
     }
 
     @Operation(summary = "Get post by id")

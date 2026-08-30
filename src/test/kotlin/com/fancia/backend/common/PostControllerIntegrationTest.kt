@@ -134,7 +134,7 @@ class PostControllerIntegrationTest(
             }
 
         mockMvc
-            .get("/internal/posts?targetId=$targetId&kind=POLL&openOnly=true") {
+            .get("/internal/posts?targetId=$targetId&kind=POLL&status=VISIBLE&status=FEATURED&status=PINNED") {
                 accept = APPLICATION_JSON
             }
             .andExpect {
@@ -144,7 +144,6 @@ class PostControllerIntegrationTest(
                 jsonPath("$.content[0].poll.closed", `is`(false))
             }
 
-        // Closed poll should be excluded from openOnly
         val closedBody = mapOf(
             "targetId" to targetId.toString(),
             "authorUserId" to userId.toString(),
@@ -168,7 +167,7 @@ class PostControllerIntegrationTest(
             .andExpect { status { isCreated() } }
 
         mockMvc
-            .get("/internal/posts?targetId=$targetId&kind=POLL&openOnly=true") {
+            .get("/internal/posts?targetId=$targetId&kind=POLL&status=VISIBLE&status=FEATURED&status=PINNED") {
                 accept = APPLICATION_JSON
             }
             .andExpect {
