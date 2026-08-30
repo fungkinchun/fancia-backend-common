@@ -15,10 +15,10 @@ import java.util.*
 
 @Repository
 interface PostRepository : JpaRepository<Post, UUID> {
-    @EntityGraph(attributePaths = ["media", "likes", "poll", "poll.options", "poll.votes"])
+    @EntityGraph(attributePaths = ["poll"])
     @Query(
         """
-        SELECT DISTINCT p FROM Post p
+        SELECT p FROM Post p
         WHERE p.targetId = :targetId
           AND (:kind IS NULL OR p.kind = :kind)
           AND (

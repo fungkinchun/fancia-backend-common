@@ -1,6 +1,7 @@
 package com.fancia.backend.common.post.core.entity
 
 import jakarta.persistence.*
+import org.hibernate.annotations.BatchSize
 import java.time.LocalDateTime
 import java.util.*
 
@@ -22,9 +23,11 @@ class PostPoll(
 
     @OneToMany(mappedBy = "poll", cascade = [CascadeType.ALL], orphanRemoval = true)
     @OrderBy("sortOrder ASC")
+    @BatchSize(size = 32)
     var options: MutableSet<PostPollOption> = mutableSetOf()
 
     @OneToMany(mappedBy = "poll", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @BatchSize(size = 32)
     var votes: MutableSet<PostPollVote> = mutableSetOf()
 
     fun isClosed(now: LocalDateTime = LocalDateTime.now()): Boolean =

@@ -4,6 +4,7 @@ import com.fancia.backend.shared.common.core.entity.AbstractEntity
 import com.fancia.backend.shared.common.post.core.enums.PostKind
 import com.fancia.backend.shared.common.post.core.enums.PostStatus
 import jakarta.persistence.*
+import org.hibernate.annotations.BatchSize
 import java.time.LocalDateTime
 import java.util.*
 
@@ -27,9 +28,11 @@ class Post(
 ) : AbstractEntity() {
     @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL], orphanRemoval = true)
     @OrderBy("sortOrder ASC")
+    @BatchSize(size = 32)
     var media: MutableSet<PostMedia> = mutableSetOf()
 
     @OneToMany(mappedBy = "post", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @BatchSize(size = 32)
     var likes: MutableSet<PostLike> = mutableSetOf()
 
     @OneToOne(mappedBy = "post", cascade = [CascadeType.ALL], orphanRemoval = true)
