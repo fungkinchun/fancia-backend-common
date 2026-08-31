@@ -42,7 +42,7 @@ interface PostRepository : JpaRepository<Post, UUID> {
         pageable: Pageable,
     ): Page<Post>
 
-    @EntityGraph(attributePaths = ["media", "likes", "poll", "poll.options", "poll.votes"])
+    @EntityGraph(attributePaths = ["poll"])
     override fun findById(id: UUID): Optional<Post>
 
     @Modifying
