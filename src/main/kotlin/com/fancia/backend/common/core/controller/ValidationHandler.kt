@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.ServletWebRequest
 import org.springframework.web.context.request.WebRequest
-import tools.jackson.databind.JsonMappingException
+import tools.jackson.core.JacksonException
 import java.net.URI
 
 @RestControllerAdvice
@@ -55,11 +55,17 @@ class ValidationHandler(
     @ExceptionHandler(HttpMessageNotReadableException::class)
     fun handleUnreadable(ex: HttpMessageNotReadableException, request: WebRequest): ProblemDetail {
         val cause = ex.mostSpecificCause
-        val path = (cause as? JsonMappingException)
+        val jackson = cause as? JacksonException
+        val path = jackson
             ?.path
-            ?.joinToString(".") { it.fieldName ?: "[${it.index}]" }
+            ?.joinToString(".") { ref ->
+                ref.propertyName ?: "[${ref.index}]"
+            }
             ?.takeIf { it.isNotBlank() }
-        val detail = path ?: cause.message?.take(500) ?: "unknown"
+        val detail = path
+            ?: jackson?.originalMessage?.take(500)
+            ?: cause.message?.take(500)
+            ?: "unknown"
         val problem = ProblemDetail.forStatusAndDetail(
             HttpStatus.BAD_REQUEST,
             detail,
