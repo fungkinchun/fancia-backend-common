@@ -57,13 +57,16 @@ class PostService(
         if (authorUserId != currentUserId) {
             throw InvalidAuthenticationException()
         }
-        validateContent(request.kind, request.body, request.media, request.poll)
+        val kind = request.kindOrDefault()
+        val media = request.mediaOrEmpty()
+        val status = request.statusOrDefault()
+        validateContent(kind, request.body, media, request.poll)
         val post = request.toEntity()
-        attachMedia(post, request.media)
-        if (request.kind == PostKind.POLL) {
+        attachMedia(post, media)
+        if (kind == PostKind.POLL) {
             attachPoll(post, request.poll!!)
         }
-        applyStatus(post, request.status)
+        applyStatus(post, status)
         markReadOnlyIfPollAlreadyClosed(post)
         return postRepository.save(post).toDto(currentUserId)
     }

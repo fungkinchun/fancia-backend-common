@@ -32,9 +32,9 @@ fun CreatePostRequest.toEntity(): Post =
         targetId = targetId!!,
         authorUserId = authorUserId!!,
         body = body,
-        status = status,
+        status = statusOrDefault(),
         expiredAt = expiredAt,
-        kind = kind,
+        kind = kindOrDefault(),
     )
 
 private fun PostMedia.toDto(): PostMediaResponse =
