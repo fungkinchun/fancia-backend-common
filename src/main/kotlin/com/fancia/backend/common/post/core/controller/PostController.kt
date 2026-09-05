@@ -85,6 +85,16 @@ class PostController(
         return ResponseEntity.ok(postService.update(postId, request, jwt))
     }
 
+    @Operation(summary = "Delete post")
+    @DeleteMapping("/{postId}")
+    fun delete(
+        @PathVariable postId: UUID,
+        @AuthenticationPrincipal jwt: Jwt,
+    ): ResponseEntity<Void> {
+        postService.delete(postId, jwt)
+        return ResponseEntity.noContent().build()
+    }
+
     @Operation(summary = "Like post")
     @PostMapping("/{postId}/likes")
     fun like(

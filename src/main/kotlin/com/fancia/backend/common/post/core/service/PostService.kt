@@ -105,6 +105,16 @@ class PostService(
     }
 
     @Transactional
+    fun delete(postId: UUID, jwt: Jwt) {
+        val currentUserId = requireUserId(jwt)
+        val post = postRepository.findById(postId).orElseThrow { PostNotFoundException(postId) }
+        if (post.authorUserId != currentUserId) {
+            throw InvalidAuthenticationException()
+        }
+        postRepository.delete(post)
+    }
+
+    @Transactional
     fun like(postId: UUID, jwt: Jwt) {
         val currentUserId = requireUserId(jwt)
         val post = postRepository.findById(postId).orElseThrow { PostNotFoundException(postId) }
