@@ -4,7 +4,7 @@ import tools.jackson.core.type.TypeReference
 import com.fancia.backend.shared.common.redis.CacheKeys
 import com.fancia.backend.shared.common.redis.CachedPage
 import com.fancia.backend.shared.common.redis.RedisQueryCache
-import com.fancia.backend.common.tag.core.repository.TagRepository
+import com.fancia.backend.shared.common.tag.core.repository.TagRepository
 import com.fancia.backend.common.tag.mapper.toDto
 import com.fancia.backend.common.tag.mapper.toEntity
 import com.fancia.backend.shared.common.tag.core.dto.CreateTagsRequest

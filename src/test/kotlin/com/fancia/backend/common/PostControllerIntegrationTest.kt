@@ -1,7 +1,7 @@
 package com.fancia.backend.common
 
 import com.fancia.backend.shared.common.post.core.enums.PostStatus
-import com.fancia.backend.common.post.core.repository.PostRepository
+import com.fancia.backend.shared.common.post.core.repository.PostRepository
 import com.fancia.backend.shared.common.post.core.dto.PostResponse
 import com.fancia.backend.shared.common.post.core.enums.PostMediaType
 import io.kotest.core.spec.style.FunSpec
@@ -52,7 +52,7 @@ class PostControllerIntegrationTest(
             "status" to "FEATURED",
         )
         val responseBody = mockMvc
-            .post("/internal/posts") {
+            .post("/internal/v1/posts") {
                 with(jwt().jwt { it.claim("userId", userId) })
                 content = jsonMapper.writeValueAsString(requestBody)
                 contentType = APPLICATION_JSON
@@ -99,7 +99,7 @@ class PostControllerIntegrationTest(
             "status" to "VISIBLE",
         )
         val created = mockMvc
-            .post("/internal/posts") {
+            .post("/internal/v1/posts") {
                 with(jwt().jwt { it.claim("userId", userId) })
                 content = jsonMapper.writeValueAsString(createBody)
                 contentType = APPLICATION_JSON
@@ -120,7 +120,7 @@ class PostControllerIntegrationTest(
         val optionId = created.poll!!.options.first { it.label == "Cafe" }.id
 
         mockMvc
-            .post("/internal/posts/${created.id}/votes") {
+            .post("/internal/v1/posts/${created.id}/votes") {
                 with(jwt().jwt { it.claim("userId", voterId) })
                 content = jsonMapper.writeValueAsString(mapOf("optionIds" to listOf(optionId.toString())))
                 contentType = APPLICATION_JSON
@@ -134,7 +134,7 @@ class PostControllerIntegrationTest(
             }
 
         mockMvc
-            .get("/internal/posts?targetId=$targetId&kind=POLL&status=VISIBLE&status=FEATURED&status=PINNED") {
+            .get("/internal/v1/posts?targetId=$targetId&kind=POLL&status=VISIBLE&status=FEATURED&status=PINNED") {
                 accept = APPLICATION_JSON
             }
             .andExpect {
@@ -158,7 +158,7 @@ class PostControllerIntegrationTest(
             "status" to "VISIBLE",
         )
         mockMvc
-            .post("/internal/posts") {
+            .post("/internal/v1/posts") {
                 with(jwt().jwt { it.claim("userId", userId) })
                 content = jsonMapper.writeValueAsString(closedBody)
                 contentType = APPLICATION_JSON
@@ -167,7 +167,7 @@ class PostControllerIntegrationTest(
             .andExpect { status { isCreated() } }
 
         mockMvc
-            .get("/internal/posts?targetId=$targetId&kind=POLL&status=VISIBLE&status=FEATURED&status=PINNED") {
+            .get("/internal/v1/posts?targetId=$targetId&kind=POLL&status=VISIBLE&status=FEATURED&status=PINNED") {
                 accept = APPLICATION_JSON
             }
             .andExpect {

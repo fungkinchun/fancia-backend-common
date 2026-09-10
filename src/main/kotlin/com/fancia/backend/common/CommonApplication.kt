@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.persistence.autoconfigure.EntityScan
 import org.springframework.boot.runApplication
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 
 @SecurityScheme(
     name = "bearerAuth",
@@ -18,6 +19,14 @@ import org.springframework.boot.runApplication
         "com.fancia.backend.common",
         "com.fancia.backend.shared.common",
         "com.fancia.backend.shared.upload"
+    ]
+)
+@EnableJpaRepositories(
+    basePackages = [
+        "com.fancia.backend.common",
+        "com.fancia.backend.shared.common.post.core.repository",
+        "com.fancia.backend.shared.common.tag.core.repository",
+        "com.fancia.backend.shared.common.rating.core.repository",
     ]
 )
 @SpringBootApplication

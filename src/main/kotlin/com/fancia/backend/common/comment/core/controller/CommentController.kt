@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/internal/comments")
+@RequestMapping("/internal/v1/comments")
 @Tag(
     name = "Comments",
     description = "Endpoints for managing comments on various targets (events, interest groups, etc). This is an internal API used by other services, not intended for public use."

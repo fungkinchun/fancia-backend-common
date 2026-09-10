@@ -1,6 +1,6 @@
 package com.fancia.backend.common
 
-import com.fancia.backend.common.tag.core.repository.TagRepository
+import com.fancia.backend.shared.common.tag.core.repository.TagRepository
 import com.fancia.backend.common.tag.mapper.toEntity
 import com.fancia.backend.shared.common.tag.core.dto.TagResponse
 import com.fancia.backend.shared.common.tag.core.entity.Tag
@@ -35,7 +35,7 @@ class CommonControllerIntegrationTest(
     test("should create new tags") {
         val testUserId = UUID.randomUUID()
         val response = mockMvc
-            .post("/api/tags") {
+            .post("/api/v1/tags") {
                 with(jwt().jwt { it.claim("userId", testUserId) })
                 val requestBody = mapOf(
                     "tags" to listOf(
@@ -64,7 +64,7 @@ class CommonControllerIntegrationTest(
 
     test("should search similar tags by type") {
         mockMvc
-            .post("/api/tags") {
+            .post("/api/v1/tags") {
                 with(jwt().jwt { it.claim("userId", UUID.randomUUID()) })
                 val requestBody = mapOf(
                     "tags" to listOf(
@@ -79,7 +79,7 @@ class CommonControllerIntegrationTest(
             .andExpect { status { isCreated() } }
 
         mockMvc
-            .get("/api/tags?type=INTEREST&search=goo&search=ba&page=0&size=3") {
+            .get("/api/v1/tags?type=INTEREST&search=goo&search=ba&page=0&size=3") {
                 accept = APPLICATION_JSON
             }
             .andDo { print() }
@@ -95,7 +95,7 @@ class CommonControllerIntegrationTest(
 
     test("should not create tags when searching") {
         mockMvc
-            .get("/api/tags?type=INTEREST&search=nonexistent&page=0&size=3") {
+            .get("/api/v1/tags?type=INTEREST&search=nonexistent&page=0&size=3") {
                 accept = APPLICATION_JSON
             }
             .andExpect {

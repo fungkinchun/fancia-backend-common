@@ -1,7 +1,7 @@
 package com.fancia.backend.common.post.core.repository
 
-import com.fancia.backend.common.post.core.entity.PostLike
-import com.fancia.backend.common.post.core.entity.PostLikeId
+import com.fancia.backend.shared.common.post.core.entity.PostLike
+import com.fancia.backend.shared.common.post.core.entity.PostLikeId
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 import java.util.*

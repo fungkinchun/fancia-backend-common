@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/internal/posts")
+@RequestMapping("/internal/v1/posts")
 @Tag(name = "Posts", description = "Internal post storage used by user, event, and interest group services.")
 @SecurityRequirement(name = "bearerAuth")
 class PostController(

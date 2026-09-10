@@ -1,8 +1,8 @@
 package com.fancia.backend.common.post.mapper
 
-import com.fancia.backend.common.post.core.entity.Post
-import com.fancia.backend.common.post.core.entity.PostMedia
-import com.fancia.backend.common.post.core.entity.PostPoll
+import com.fancia.backend.shared.common.post.core.entity.Post
+import com.fancia.backend.shared.common.post.core.entity.PostMedia
+import com.fancia.backend.shared.common.post.core.entity.PostPoll
 import com.fancia.backend.shared.common.post.core.dto.CreatePostRequest
 import com.fancia.backend.shared.common.post.core.dto.PollOptionResponse
 import com.fancia.backend.shared.common.post.core.dto.PollResponse

@@ -1,7 +1,7 @@
 package com.fancia.backend.common
 
 import com.fancia.backend.common.comment.core.repository.CommentRepository
-import com.fancia.backend.common.post.core.repository.PostRepository
+import com.fancia.backend.shared.common.post.core.repository.PostRepository
 import com.fancia.backend.shared.common.comment.core.dto.CommentResponse
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
@@ -41,7 +41,7 @@ class CommentControllerIntegrationTest(
             "status" to "VISIBLE",
         )
         val postResponseBody = mockMvc
-            .post("/internal/posts") {
+            .post("/internal/v1/posts") {
                 with(jwt().jwt { it.claim("userId", userId) })
                 content = jsonMapper.writeValueAsString(postRequestBody)
                 contentType = APPLICATION_JSON
@@ -58,7 +58,7 @@ class CommentControllerIntegrationTest(
             "body" to "London Hikers",
         )
         val responseBody = mockMvc
-            .post("/internal/comments") {
+            .post("/internal/v1/comments") {
                 with(jwt().jwt { it.claim("userId", userId) })
                 content = jsonMapper.writeValueAsString(commentRequestBody)
                 contentType = APPLICATION_JSON
@@ -91,7 +91,7 @@ class CommentControllerIntegrationTest(
             "body" to "Top-level comment",
         )
         val createResponseBody = mockMvc
-            .post("/internal/comments") {
+            .post("/internal/v1/comments") {
                 with(jwt().jwt { it.claim("userId", userId) })
                 content = jsonMapper.writeValueAsString(commentRequestBody)
                 contentType = APPLICATION_JSON
@@ -104,7 +104,7 @@ class CommentControllerIntegrationTest(
         val commentId = jsonMapper.readTree(createResponseBody).get("id").asText()
 
         mockMvc
-            .get("/internal/comments") {
+            .get("/internal/v1/comments") {
                 with(jwt().jwt { it.claim("userId", userId) })
                 param("targetId", resourceId.toString())
                 param("resourceId", resourceId.toString())
@@ -122,7 +122,7 @@ class CommentControllerIntegrationTest(
             "body" to "Reply comment",
         )
         mockMvc
-            .post("/internal/comments") {
+            .post("/internal/v1/comments") {
                 with(jwt().jwt { it.claim("userId", userId) })
                 content = jsonMapper.writeValueAsString(replyRequestBody)
                 contentType = APPLICATION_JSON
@@ -131,7 +131,7 @@ class CommentControllerIntegrationTest(
             .andExpect { status { isCreated() } }
 
         mockMvc
-            .get("/internal/comments") {
+            .get("/internal/v1/comments") {
                 with(jwt().jwt { it.claim("userId", userId) })
                 param("targetId", commentId)
                 param("resourceId", resourceId.toString())

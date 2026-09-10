@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping("/api/tags")
+@RequestMapping("/api/v1/tags")
 @Tag(name = "Tags", description = "Endpoints for managing global tags")
 @SecurityRequirement(name = "bearerAuth")
 class TagController(

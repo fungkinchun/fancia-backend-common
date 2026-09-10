@@ -1,15 +1,15 @@
 package com.fancia.backend.common.post.core.service
 
-import com.fancia.backend.common.post.core.entity.Post
-import com.fancia.backend.common.post.core.entity.PostLike
-import com.fancia.backend.common.post.core.entity.PostLikeId
-import com.fancia.backend.common.post.core.entity.PostMedia
-import com.fancia.backend.common.post.core.entity.PostPoll
-import com.fancia.backend.common.post.core.entity.PostPollOption
-import com.fancia.backend.common.post.core.entity.PostPollVote
-import com.fancia.backend.common.post.core.entity.PostPollVoteId
+import com.fancia.backend.shared.common.post.core.entity.Post
+import com.fancia.backend.shared.common.post.core.entity.PostLike
+import com.fancia.backend.shared.common.post.core.entity.PostLikeId
+import com.fancia.backend.shared.common.post.core.entity.PostMedia
+import com.fancia.backend.shared.common.post.core.entity.PostPoll
+import com.fancia.backend.shared.common.post.core.entity.PostPollOption
+import com.fancia.backend.shared.common.post.core.entity.PostPollVote
+import com.fancia.backend.shared.common.post.core.entity.PostPollVoteId
 import com.fancia.backend.common.post.core.repository.PostLikeRepository
-import com.fancia.backend.common.post.core.repository.PostRepository
+import com.fancia.backend.shared.common.post.core.repository.PostRepository
 import com.fancia.backend.common.post.mapper.toDto
 import com.fancia.backend.common.post.mapper.toEntity
 import com.fancia.backend.shared.common.core.exception.InvalidAuthenticationException
